@@ -22,7 +22,7 @@ void nxterm_free(void) {
 void prv_nxterm_set_cursor_pos(int row, int col) {
 	if (!_nxterm_cAllocated) return;
 
-	printf("\x1b[%d:%dH", row, col);
+	printf("\x1b[%d;%dH", row, col);
 }
 
 void nxterm_update_hud(struct NXTermHUD* pNXTermHUD) {
