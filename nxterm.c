@@ -26,30 +26,69 @@ void nxterm_free(void) {
 void prv_nxterm_set_cursor_pos(int row, int col) {
 	if (!_nxterm_cAllocated) return;
 
-	printf("\x1b[%d:%dH", row, col);
+	printf("\x1b[%d;%dH", row, col);
+}
+
+void nxterm_vc_goto(int row, int col) {
+	if (!_nxterm_cAllocated) return;
+
+	prv_nxterm_set_cursor_pos(row, col);
+	_nxterm_cRow = row;
+	_nxterm_cCol = col;
 }
 
 void nxterm_hud_update(struct NXTermHUD* pNXTermHUD) {
 	if (!_nxterm_cAllocated) return;
 
+	int len;
+
+	len = 0;
+	for (int i = 0; pNXTermHUD->tl_text[i] != '\0'; i++) {
+		if (pNXTermHUD->tl_text[i] == '\e' && pNXTermHUD->tl_text[i + 1] == '[') {
+			while (pNXTermHUD->tl_text[i] != 'm' && pNXTermHUD->tl_text[i] != '\0') i++;
+			continue;
+		}
+		len++;
+	}
 	prv_nxterm_set_cursor_pos(2, 2);
 	printf("%s", pNXTermHUD->tl_text);
-	for (int i = 0; i < NXTERMHUD_ELEMENT_BUFSIZE - strlen(pNXTermHUD->tl_text); i++) printf(" ");
+	for (int i = len; i < 40; i++) printf(" ");
 
+	len = 0;
+	for (int i = 0; pNXTermHUD->bl_text[i] != '\0'; i++) {
+		if (pNXTermHUD->bl_text[i] == '\e' && pNXTermHUD->bl_text[i + 1] == '[') {
+			while (pNXTermHUD->bl_text[i] != 'm' && pNXTermHUD->bl_text[i] != '\0') i++;
+			continue;
+		}
+		len++;
+	}
 	prv_nxterm_set_cursor_pos(44, 2);
 	printf("%s", pNXTermHUD->bl_text);
-	for (int i = 0; i < NXTERMHUD_ELEMENT_BUFSIZE - strlen(pNXTermHUD->bl_text); i++) printf(" ");
+	for (int i = len; i < 40; i++) printf(" ");
 
-
-	prv_nxterm_set_cursor_pos(2, 40);
-	for (int i = 0; i < NXTERMHUD_ELEMENT_BUFSIZE - strlen(pNXTermHUD->tr_text); i++) printf(" ");
+	len = 0;
+	for (int i = 0; pNXTermHUD->tr_text[i] != '\0'; i++) {
+		if (pNXTermHUD->tr_text[i] == '\e' && pNXTermHUD->tr_text[i + 1] == '[') {
+			while (pNXTermHUD->tr_text[i] != 'm' && pNXTermHUD->tr_text[i] != '\0') i++;
+			continue;
+		}
+		len++;
+	}
+	prv_nxterm_set_cursor_pos(2, 80 - len);
 	printf("%s", pNXTermHUD->tr_text);
 
-	prv_nxterm_set_cursor_pos(44, 40);
-	for (int i = 0; i < NXTERMHUD_ELEMENT_BUFSIZE - strlen(pNXTermHUD->br_text); i++) printf(" ");
+	len = 0;
+	for (int i = 0; pNXTermHUD->br_text[i] != '\0'; i++) {
+		if (pNXTermHUD->br_text[i] == '\e' && pNXTermHUD->br_text[i + 1] == '[') {
+			while (pNXTermHUD->br_text[i] != 'm' && pNXTermHUD->br_text[i] != '\0') i++;
+			continue;
+		}
+		len++;
+	}
+	prv_nxterm_set_cursor_pos(44, 80 - len);
 	printf("%s", pNXTermHUD->br_text);
 
-	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol); // restore cursor to its original position
+	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol + 2);
 	consoleUpdate(NULL);
 }
 
@@ -74,7 +113,7 @@ void nxterm_vc_clear(void) {
 
 	_nxterm_cRow = 4;
 	_nxterm_cCol = 0;
-	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol);
+	prv_nxterm_set_cursor_pos(_nxterm_cRow, 2);
 
 	consoleUpdate(NULL);
 }
@@ -93,46 +132,91 @@ void nxterm_vc_printf(const char* fmt, ...) {
 	for (int index = 0; buf[index] != '\0'; index++) {
 		char c = buf[index];
 
-		if (c == '\n' || _nxterm_cCol == 80) {
-			_nxterm_cRow++;
-			_nxterm_cCol = 0;
-
-			if (_nxterm_cRow == 43) {
-				for (int i = 0; i < 38; i++) {
+		if (c == '\n' || _nxterm_cCol == 78) {
+			if (_nxterm_cRow == 42) {
+				for (int i = 0; i < 38; i++)
 					strcpy(_nxterm_lines[i], _nxterm_lines[i + 1]);
-				}
 
 				_nxterm_lines[38][0] = '\0';
-				_nxterm_cRow = 42;
 
 				for (int row = 4; row <= 42; row++) {
-					printf("\x1b[%d;1H", row);
-
-					printf("%-80s", _nxterm_lines[row - 4]);
+					prv_nxterm_set_cursor_pos(row, 2);
+					printf("%-78s ", _nxterm_lines[row - 4]);
+					printf(NXWHITE);
 				}
+
+				_nxterm_cRow = 42;
+				_nxterm_cCol = 0;
+
+				prv_nxterm_set_cursor_pos(42, 2);
+			}
+			else {
+				_nxterm_cRow++;
+				_nxterm_cCol = 0;
+
+				prv_nxterm_set_cursor_pos(_nxterm_cRow, 2);
 			}
 
-			printf("\x1b[%d;1H", _nxterm_cRow + 1);
 			continue;
 		}
 
 		if (c == '\r') {
 			_nxterm_cCol = 0;
-			printf("\r");
+			prv_nxterm_set_cursor_pos(_nxterm_cRow, 2);
 			continue;
 		}
 
 		int line = _nxterm_cRow - 4;
-		if (line >= 0 && line < 39) {
-			_nxterm_lines[line][_nxterm_cCol] = c;
-			_nxterm_lines[line][_nxterm_cCol + 1] = '\0';
+
+		if (line < 0 || line >= NXTERM_LINE_COUNT) continue;
+
+		if (c == '\x1b' && buf[index + 1] == '[') {
+			int start = index;
+			index += 2;
+
+			while (buf[index] != '\0') {
+				char ansi_char = buf[index];
+
+				if (ansi_char >= 0x40 && ansi_char <= 0x7E) break;
+
+				index++;
+			}
+
+			if (buf[index] != '\0') {
+				int len = index - start + 1;
+				int current_len = strlen(_nxterm_lines[line]);
+
+				if (current_len + len < NXTERM_LINE_BUFSIZE) {
+					memcpy(&_nxterm_lines[line][current_len], &buf[start], len);
+					_nxterm_lines[line][current_len + len] = '\0';
+				}
+
+				printf("%.*s", len, &buf[start]);
+			}
+
+			continue;
 		}
 
-		printf("%c", c);
-		_nxterm_cCol++;
+		if (_nxterm_cCol < 78) {
+			int current_len = strlen(_nxterm_lines[line]);
+
+			if (current_len + 1 < NXTERM_LINE_BUFSIZE) {
+				_nxterm_lines[line][current_len] = c;
+				_nxterm_lines[line][current_len + 1] = '\0';
+			}
+
+			prv_nxterm_set_cursor_pos(
+				_nxterm_cRow,
+				_nxterm_cCol + 2
+			);
+
+			printf("%c", c);
+
+			_nxterm_cCol++;
+		}
 	}
 
-	printf("\x1b[%d;%dH", _nxterm_cRow + 1, _nxterm_cCol + 1);
+	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol + 2);
 
 	consoleUpdate(NULL);
 }

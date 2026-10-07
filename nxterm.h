@@ -9,9 +9,11 @@
 
 #include <switch.h>
 
+#define NXTERM_VERSION "nxterm v1.00"
+
 #define NXTERMHUD_ELEMENT_BUFSIZE 38
 #define NXTERM_LINE_COUNT 39
-#define NXTERM_LINE_BUFSIZE 80
+#define NXTERM_LINE_BUFSIZE 512
 
 extern bool _nxterm_cAllocated;
 extern char _nxterm_lines[NXTERM_LINE_COUNT][NXTERM_LINE_BUFSIZE + 1];
@@ -36,5 +38,16 @@ void nxterm_hud_update(struct NXTermHUD* pNXTermHUD);
 void nxterm_vc_clear(void);
 void nxterm_vc_clear_row(int row, bool update_console);
 void nxterm_vc_printf(const char* fmt, ...);
+void nxterm_vc_goto(int	row, int col);
+
+// use these color defs to avoid any issues
+#define NXBLACK   "\e[0;30m"
+#define NXRED     "\e[0;31m"
+#define NXGREEN   "\e[0;32m"
+#define NXYELLOW  "\e[0;33m"
+#define NXBLUE    "\e[0;34m"
+#define NXMAGENTA "\e[0;35m"
+#define NXCYAN    "\e[0;36m"
+#define NXWHITE   "\e[0;37m"
 
 #endif
