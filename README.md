@@ -193,16 +193,7 @@ int main(int argc, char* argv[]) {
     nxterm_vc_printf("Virtual console initialized.\n");
     nxterm_vc_printf("Value: %d\n", 123);
 
-    while (appletMainLoop()) {
-        hidScanInput();
-
-        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-
-        if (kDown & KEY_PLUS)
-            break;
-
-        consoleUpdate(NULL);
-    }
+    while (appletMainLoop());
 
     nxterm_free();
     consoleExit(NULL);
