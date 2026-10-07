@@ -10,8 +10,11 @@
 #include <switch.h>
 
 #define NXTERMHUD_ELEMENT_BUFSIZE 38
+#define NXTERM_LINE_COUNT 39
+#define NXTERM_LINE_BUFSIZE 80
 
 extern bool _nxterm_cAllocated;
+extern char _nxterm_lines[NXTERM_LINE_COUNT][NXTERM_LINE_BUFSIZE + 1];
 extern int  _nxterm_cRow;
 extern int  _nxterm_cCol;
 
@@ -20,7 +23,7 @@ typedef struct NXTermHUD {
 	char tr_text[NXTERMHUD_ELEMENT_BUFSIZE]; // top right
 	char bl_text[NXTERMHUD_ELEMENT_BUFSIZE]; // bottom left
 	char br_text[NXTERMHUD_ELEMENT_BUFSIZE]; // bottom right
-};
+} NXTHUD;
 
 void prv_nxterm_set_cursor_pos(int row, int col);
 
