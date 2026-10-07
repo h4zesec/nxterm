@@ -40,6 +40,12 @@ PrintConsole console;
 nxterm_init(&console);
 ```
 
+or
+
+```c
+nxterm_init(NULL);
+```
+
 The console is initialized only once. Calling `nxterm_init()` again while the console is already initialized has no effect.
 
 PrintConsole structure (https://switchbrew.github.io/libnx/console_8h_source.html):
