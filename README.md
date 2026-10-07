@@ -42,6 +42,37 @@ nxterm_init(&console);
 
 The console is initialized only once. Calling `nxterm_init()` again while the console is already initialized has no effect.
 
+PrintConsole structure (https://switchbrew.github.io/libnx/console_8h_source.html):
+
+```c
+struct PrintConsole
+{
+    ConsoleFont font;          ///< Font of the console
+    ConsoleRenderer* renderer; ///< Renderer of the console
+ 
+    int cursorX;               ///< Current X location of the cursor (as a tile offset by default)
+    int cursorY;               ///< Current Y location of the cursor (as a tile offset by default)
+ 
+    int prevCursorX;           ///< Internal state
+    int prevCursorY;           ///< Internal state
+ 
+    int consoleWidth;          ///< Width of the console hardware layer in characters
+    int consoleHeight;         ///< Height of the console hardware layer in characters
+ 
+    int windowX;               ///< Window X location in characters
+    int windowY;               ///< Window Y location in characters
+    int windowWidth;           ///< Window width in characters
+    int windowHeight;          ///< Window height in characters
+ 
+    int tabSize;               ///< Size of a tab
+    u16 fg;                    ///< Foreground color
+    u16 bg;                    ///< Background color
+    int flags;                 ///< Reverse/bright flags
+ 
+    bool consoleInitialised;   ///< True if the console is initialized
+};
+```
+
 When the application is finished with the terminal:
 
 ```c
