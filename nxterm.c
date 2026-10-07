@@ -29,7 +29,7 @@ void prv_nxterm_set_cursor_pos(int row, int col) {
 	printf("\x1b[%d:%dH", row, col);
 }
 
-void nxterm_update_hud(struct NXTermHUD* pNXTermHUD) {
+void nxterm_hud_update(struct NXTermHUD* pNXTermHUD) {
 	if (!_nxterm_cAllocated) return;
 
 	prv_nxterm_set_cursor_pos(2, 2);
@@ -51,6 +51,10 @@ void nxterm_update_hud(struct NXTermHUD* pNXTermHUD) {
 
 	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol); // restore cursor to its original position
 	consoleUpdate(NULL);
+}
+
+int nxterm_hud_secure_copy(char* pText, char* content) {
+	return snprintf(pText, NXTERMHUD_ELEMENT_BUFSIZE, "%s", content);
 }
 
 void nxterm_vc_clear_row(int row, bool update_console) {

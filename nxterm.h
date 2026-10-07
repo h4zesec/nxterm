@@ -24,13 +24,14 @@ typedef struct NXTermHUD {
 	char bl_text[NXTERMHUD_ELEMENT_BUFSIZE]; // bottom left
 	char br_text[NXTERMHUD_ELEMENT_BUFSIZE]; // bottom right
 } NXTHUD;
+int  nxterm_hud_secure_copy(char* pText, char* content);
 
 void prv_nxterm_set_cursor_pos(int row, int col);
 
 void nxterm_init(PrintConsole* pPrintConsole);
 void nxterm_free(void);
 
-void nxterm_update_hud(struct NXTermHUD* pNXTermHUD);
+void nxterm_hud_update(struct NXTermHUD* pNXTermHUD);
 
 void nxterm_vc_clear(void);
 void nxterm_vc_clear_row(int row, bool update_console);
