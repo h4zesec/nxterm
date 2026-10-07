@@ -205,11 +205,7 @@ void nxterm_vc_printf(const char* fmt, ...) {
 				_nxterm_lines[line][current_len + 1] = '\0';
 			}
 
-			prv_nxterm_set_cursor_pos(
-				_nxterm_cRow,
-				_nxterm_cCol + 2
-			);
-
+			prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol + 2);
 			printf("%c", c);
 
 			_nxterm_cCol++;
