@@ -67,6 +67,11 @@ void nxterm_vc_clear(void) {
 	if (!_nxterm_cAllocated) return;
 
 	for (int row = 4; row <= 42; row++) nxterm_vc_clear_row(row, false);
+
+	_nxterm_cRow = 4;
+	_nxterm_cCol = 0;
+	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol);
+
 	consoleUpdate(NULL);
 }
 
