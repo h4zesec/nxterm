@@ -2,6 +2,7 @@
 #include "nxterm.h"
 
 bool _nxterm_cAllocated = false;
+char _nxterm_lines[NXTERM_LINE_COUNT][NXTERM_LINE_BUFSIZE + 1];
 int  _nxterm_cRow = 0;
 int  _nxterm_cCol = 0;
 
@@ -15,6 +16,9 @@ void nxterm_init(PrintConsole* pPrintConsole) {
 void nxterm_free(void) {
 	if (!_nxterm_cAllocated) return;
 
+	_nxterm_cRow = 0;
+	_nxterm_cCol = 0;
+
 	consoleExit(NULL);
 	_nxterm_cAllocated = false;
 }
@@ -22,7 +26,7 @@ void nxterm_free(void) {
 void prv_nxterm_set_cursor_pos(int row, int col) {
 	if (!_nxterm_cAllocated) return;
 
-	printf("\x1b[%d;%dH", row, col);
+	printf("\x1b[%d:%dH", row, col);
 }
 
 void nxterm_update_hud(struct NXTermHUD* pNXTermHUD) {
@@ -46,7 +50,7 @@ void nxterm_update_hud(struct NXTermHUD* pNXTermHUD) {
 	printf("%s", pNXTermHUD->br_text);
 
 	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol); // restore cursor to its original position
-	updateConsole(NULL);
+	consoleUpdate(NULL);
 }
 
 void nxterm_vc_clear_row(int row, bool update_console) {
@@ -56,20 +60,16 @@ void nxterm_vc_clear_row(int row, bool update_console) {
 	for (int i = 0; i <= 80; i++) printf(" ");
 	
 	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol); // restore cursor to its original position
-	if (update_console) updateConsole(NULL);
+	if (update_console) consoleUpdate(NULL);
 }
 
 void nxterm_vc_clear(void) {
 	if (!_nxterm_cAllocated) return;
 
 	for (int row = 4; row <= 42; row++) nxterm_vc_clear_row(row, false);
-	updateConsole(NULL);
+	consoleUpdate(NULL);
 }
 
-// TODO: Move lines up and create char** array for each line from the 4th to the 42nd line. Delete first
-// item of array after the 42nd char* is filled and move every char* one down (42nd -> 41st, 41st -> 40, ...) and
-// clear the 42nd char* for the new line that is going the printed.
-  
 void nxterm_vc_printf(const char* fmt, ...) {
 	if (!_nxterm_cAllocated) return;
 
@@ -83,19 +83,47 @@ void nxterm_vc_printf(const char* fmt, ...) {
 
 	for (int index = 0; buf[index] != '\0'; index++) {
 		char c = buf[index];
-		if (c == '\n') {
+
+		if (c == '\n' || _nxterm_cCol == 80) {
 			_nxterm_cRow++;
 			_nxterm_cCol = 0;
 
-			printf("\n");
-			consoleUpdate(NULL);
+			if (_nxterm_cRow == 43) {
+				for (int i = 0; i < 38; i++) {
+					strcpy(_nxterm_lines[i], _nxterm_lines[i + 1]);
+				}
+
+				_nxterm_lines[38][0] = '\0';
+				_nxterm_cRow = 42;
+
+				for (int row = 4; row <= 42; row++) {
+					printf("\x1b[%d;1H", row);
+
+					printf("%-80s", _nxterm_lines[row - 4]);
+				}
+			}
+
+			printf("\x1b[%d;1H", _nxterm_cRow + 1);
 			continue;
 		}
-		else if (c == '\r') _nxterm_cCol = 0;
 
-		_nxterm_cCol++;
+		if (c == '\r') {
+			_nxterm_cCol = 0;
+			printf("\r");
+			continue;
+		}
+
+		int line = _nxterm_cRow - 4;
+		if (line >= 0 && line < 39) {
+			_nxterm_lines[line][_nxterm_cCol] = c;
+			_nxterm_lines[line][_nxterm_cCol + 1] = '\0';
+		}
+
 		printf("%c", c);
+		_nxterm_cCol++;
 	}
+
+	printf("\x1b[%d;%dH", _nxterm_cRow + 1, _nxterm_cCol + 1);
 
 	consoleUpdate(NULL);
 }
