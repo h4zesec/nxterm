@@ -1,6 +1,7 @@
 # nxterm
 
 <img src="https://github.com/h4zesec/nxterm/blob/main/imgs/emulator_screenshot.png?raw=true">
+<img src="https://github.com/h4zesec/nxterm/blob/main/imgs/on_real_hardware.png?raw=true">
 
 `nxterm` is a lightweight terminal-style console utility for Nintendo Switch homebrew applications using **libnx**.
 
