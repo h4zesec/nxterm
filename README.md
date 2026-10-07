@@ -174,6 +174,8 @@ ANSI escape sequences are preserved in the internal line buffer so that scrollin
 #include <switch.h>
 #include "nxterm.h"
 
+#define vcprintf(...) nxterm_vc_printf(__VA_ARGS__)
+
 int main(int argc, char* argv[]) {
     consoleInit(NULL);
 
@@ -189,9 +191,9 @@ int main(int argc, char* argv[]) {
 
     nxterm_hud_update(&hud);
 
-    nxterm_vc_printf(NXCYAN "nxterm example\n" NXWHITE);
-    nxterm_vc_printf("Virtual console initialized.\n");
-    nxterm_vc_printf("Value: %d\n", 123);
+    vcprintf(NXCYAN "nxterm example\n" NXWHITE);
+    vcprintf("Virtual console initialized.\n");
+    vcprintf("Value: %d\n", 123);
 
     while (appletMainLoop());
 
