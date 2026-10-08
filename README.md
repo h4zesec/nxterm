@@ -223,14 +223,11 @@ int main(int argc, char* argv[]) {
     nxterm_init(NULL);
     nxterm_vc_clear();
 
-    // only set the *_text values like this if you know you wont cause a bufferoverflow.
-    // use nxterm_hud_secure_copy to be safe
-    NXTHUD hud = {
-        .tl_text = "nxterm",
-        .tr_text = NXGREEN "READY" NXWHITE,
-        .bl_text = "Nintendo Switch",
-        .br_text = NXTERM_VERSION
-    };
+    NXTHUD hud;
+    nxterm_hud_secure_copy(hud.tl_text, "nxterm");
+    nxterm_hud_secure_copy(hud.tl_text, NXGREEN "READY" NXWHITE;
+    nxterm_hud_secure_copy(hud.tl_text, "Nintendo Switch");
+    nxterm_hud_secure_copy(hud.tl_text, NXTERM_VERSION);
 
     nxterm_hud_update(&hud);
 
