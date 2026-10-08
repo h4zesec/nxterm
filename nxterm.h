@@ -21,10 +21,10 @@ extern int  _nxterm_cRow;
 extern int  _nxterm_cCol;
 
 typedef struct NXTermHUD {
-	char tl_text[NXTERMHUD_ELEMENT_BUFSIZE]; // top left
-	char tr_text[NXTERMHUD_ELEMENT_BUFSIZE]; // top right
-	char bl_text[NXTERMHUD_ELEMENT_BUFSIZE]; // bottom left
-	char br_text[NXTERMHUD_ELEMENT_BUFSIZE]; // bottom right
+	char tl_text[NXTERM_LINE_BUFSIZE]; // top left
+	char tr_text[NXTERM_LINE_BUFSIZE]; // top right
+	char bl_text[NXTERM_LINE_BUFSIZE]; // bottom left
+	char br_text[NXTERM_LINE_BUFSIZE]; // bottom right
 } NXTHUD;
 int  nxterm_hud_secure_copy(char* pText, char* content);
 

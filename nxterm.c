@@ -88,12 +88,12 @@ void nxterm_hud_update(struct NXTermHUD* pNXTermHUD) {
 	prv_nxterm_set_cursor_pos(44, 80 - len);
 	printf("%s", pNXTermHUD->br_text);
 
-	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol + 2);
+	prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol);
 	consoleUpdate(NULL);
 }
 
 int nxterm_hud_secure_copy(char* pText, char* content) {
-	return snprintf(pText, NXTERMHUD_ELEMENT_BUFSIZE, "%s", content);
+	return snprintf(pText, NXTERM_LINE_BUFSIZE, "%s", content);
 }
 
 void nxterm_vc_clear_row(int row, bool update_console) {
@@ -205,7 +205,11 @@ void nxterm_vc_printf(const char* fmt, ...) {
 				_nxterm_lines[line][current_len + 1] = '\0';
 			}
 
-			prv_nxterm_set_cursor_pos(_nxterm_cRow, _nxterm_cCol + 2);
+			prv_nxterm_set_cursor_pos(
+				_nxterm_cRow,
+				_nxterm_cCol + 2
+			);
+
 			printf("%c", c);
 
 			_nxterm_cCol++;
