@@ -185,7 +185,7 @@ For safely copying text into a HUD element, use:
 nxterm_hud_secure_copy(hud.tl_text, "My Application");
 ```
 
-The function uses `snprintf()` with `NXTERMHUD_ELEMENT_BUFSIZE` as the maximum size.
+The function uses `snprintf()` with `NXTERM_LINE_BUFSIZE` as the maximum size.
 
 ## ANSI Colors
 
@@ -330,10 +330,6 @@ The main configuration values are defined in `nxterm.h`:
 #define NXTERM_LINE_COUNT 39
 #define NXTERM_LINE_BUFSIZE 512
 ```
-
-### `NXTERMHUD_ELEMENT_BUFSIZE`
-
-Maximum storage size for each HUD element.
 
 ### `NXTERM_LINE_COUNT`
 
