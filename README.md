@@ -220,8 +220,6 @@ ANSI escape sequences are preserved in the internal line buffer so that scrollin
 #define vcprintf(...) nxterm_vc_printf(__VA_ARGS__)
 
 int main(int argc, char* argv[]) {
-    consoleInit(NULL);
-
     nxterm_init(NULL);
     nxterm_vc_clear();
 
@@ -241,7 +239,6 @@ int main(int argc, char* argv[]) {
     while (appletMainLoop());
 
     nxterm_free();
-    consoleExit(NULL);
 
     return 0;
 }
