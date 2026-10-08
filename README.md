@@ -223,6 +223,8 @@ int main(int argc, char* argv[]) {
     nxterm_init(NULL);
     nxterm_vc_clear();
 
+    // only set the *_text values like this if you know you wont cause a bufferoverflow.
+    // use nxterm_hud_secure_copy to be safe
     NXTHUD hud = {
         .tl_text = "nxterm",
         .tr_text = NXGREEN "READY" NXWHITE,
